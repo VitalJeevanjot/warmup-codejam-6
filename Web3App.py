@@ -19,12 +19,15 @@ class RV(RecycleView):
 class MainWidget(App):
     # print(w3.eth.filter('pending').get_new_entries())
     transactions = []
+    current_address = ""
+
     def build(self):
         root_widget = Web3Widget()
         return root_widget
 
 
     def get_data(self, address, rsv):
+        self.current_address = address.text
         req = UrlRequest(url="https://blockscout.funcoin.io/api?module=account&action=txlist&address="+address.text,
                          on_success=self.set_list, on_failure=self.on_error, on_error=self.on_error)
         self.transactions = rsv
@@ -34,7 +37,22 @@ class MainWidget(App):
         if result['result'] == None:
             self.transactions.data = [{"color": (.5, .5, 1, 1), 'text': str('No transaction for this input box address')}]
         else:
-            self.transactions.data = [{"color":(.5,.5, 1, 1), 'text': str(x['value'])} for x in result['result']]
+            self.transactions.data = []
+            for transaction in result['result']:
+                if(self.current_address == transaction['to']):
+                    self.transactions.data.append(
+                        {
+                            "color":(0,1,0,1),
+                            "text":str(transaction['value'])
+                        }
+                    )
+                else:
+                    self.transactions.data.append(
+                        {
+                            "color": (1, 0, 0, 1),
+                            "text": str(transaction['value'])
+                        }
+                    )
         pass
 
     def on_error(self, req, error):

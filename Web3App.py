@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
@@ -5,8 +7,6 @@ from web3 import Web3
 from kivy.clock import Clock
 from kivy.network.urlrequest import UrlRequest
 from kivy.uix.recycleview import RecycleView
-
-from pathlib import Path
 
 my_provider = Web3.HTTPProvider('https://rpc.astor.host/node')
 w3 = Web3(my_provider)
@@ -29,9 +29,6 @@ class MainWidget(App):
     last_search = ''
 
     def build(self):
-        print("Build")
-        print("last search", self.last_search)
-
         root_widget = Web3Widget()
         return root_widget
 

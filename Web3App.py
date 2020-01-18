@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from web3 import Web3
-from kivy.loader import Loader
 from kivy.clock import Clock
 from kivy.network.urlrequest import UrlRequest
 from kivy.uix.recycleview import RecycleView
@@ -12,6 +13,10 @@ import webbrowser
 
 my_provider = Web3.HTTPProvider('https://rpc.astor.host/node')
 w3 = Web3(my_provider)
+
+
+BLOCK_SCOUT_URL = "https://blockscout.funcoin.io/api?module=account&action=txlist&address={}"
+LAST_SEARCH_FILE = Path(__file__).parent / 'last_search.txt'
 
 class CustomLabel(BoxLayout):
 
@@ -28,24 +33,29 @@ class CustomLabel(BoxLayout):
 class Web3Widget(BoxLayout):
     pass
 
+
 class RV(RecycleView):
     pass
+
 
 class MainWidget(App):
     # print(w3.eth.filter('pending').get_new_entries())
     transactions = []
-    current_address = ""
+    
+    last_search = ''
 
     def build(self):
         root_widget = Web3Widget()
         return root_widget
 
-
     def get_data(self, address, rsv):
-        self.current_address = address.text
-        req = UrlRequest(url="https://blockscout.funcoin.io/api?module=account&action=txlist&address="+address.text,
-                         on_success=self.set_list, on_failure=self.on_error, on_error=self.on_error)
+
+        req = UrlRequest(url=BLOCK_SCOUT_URL.format(address.text),
+                         on_success=self.set_list,
+                         on_failure=self.on_error,
+                         on_error=self.on_error)
         self.transactions = rsv
+        self.last_search = address.text
 
     def set_list(self, req, result):
         # Add loading here
@@ -59,7 +69,7 @@ class MainWidget(App):
         else:
             self.transactions.data = []
             for transaction in result['result']:
-                if(self.current_address.lower() == transaction['to'].lower()):
+                if(self.last_search.lower() == transaction['to'].lower()):
                     self.transactions.data.append(
                         {
                             "label_color":(0,1,0,1),
@@ -77,6 +87,7 @@ class MainWidget(App):
                     )
         pass
 
+
     def on_error(self, req, error):
         print('error')
         print(error)
@@ -89,6 +100,14 @@ class MainWidget(App):
         pass
         # App.get_running_app().root.ids.get_values.text
 
+    def on_start(self):
+        if LAST_SEARCH_FILE.exists():
+            with open(LAST_SEARCH_FILE, 'r') as f:
+                self.last_search = f.read()
+
+    def on_stop(self):
+        with open(LAST_SEARCH_FILE, 'w') as f:
+            f.write(self.last_search)
 
 
 def get_chain_index(dt):

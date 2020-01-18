@@ -1,6 +1,26 @@
 #:import Factory kivy.factory.Factory
 #:import w3 __main__.w3
 
+
+<CustomLabel>:
+    label_text:''
+    label_color:0.5,0.5,1,1
+    transaction_id:''
+    orientation:'horizontal'
+    size_hint_y:None
+    padding:10
+    Button:
+        text:"View"
+        on_release: root.open_url(root.transaction_id)
+        disabled:True if root.transaction_id=="" else False
+        opacity:0 if root.transaction_id=="" else 1
+        size_hint_x:0.01 if root.transaction_id=="" else 0.15
+    Label:
+        text:root.label_text
+        color:root.label_color
+        size_hint_y:0.85
+
+
 <MyPopup@Popup>:
     title: 'Transactions'
     auto_dismiss: False
@@ -28,8 +48,8 @@
             do_scroll_y: True
             RecycleView:
                 id: recycleViewer
-                data: [{'color': (.5, .5, 1, 1), 'text': 'Please search using above'}]
-                viewclass: 'Label'
+                data: [{'label_color': (.5, .5, 1, 1), 'label_text': 'Please search using above'}]
+                viewclass: 'CustomLabel'
                 RecycleBoxLayout:
                     default_size: None, dp(56)
                     default_size_hint: 1, None

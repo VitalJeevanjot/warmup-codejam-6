@@ -21,6 +21,7 @@ w3 = Web3(my_provider)
 BLOCK_SCOUT_URL = "https://blockscout.funcoin.io/api?module=account&action=txlist&address={}"
 LAST_SEARCH_FILE = Path(__file__).parent / 'last_search.txt'
 
+
 class CustomLabel(BoxLayout):
 
     def __init__(self, **kwargs):
@@ -30,7 +31,8 @@ class CustomLabel(BoxLayout):
         label_color = ColorProperty(None)
 
     def open_url(self, transaction_id):
-        webbrowser.open_new_tab('https://blockscout.funcoin.io/tx/'+transaction_id+'/internal_transactions')
+        webbrowser.open_new_tab('https://blockscout.funcoin.io/tx/' +
+                                transaction_id+'/internal_transactions')
 
 
 class Web3Widget(FloatLayout):
@@ -40,8 +42,10 @@ class Web3Widget(FloatLayout):
 class RV(RecycleView):
     pass
 
+
 class MyPopup(Popup):
     pass
+
 
 class MainWidget(App):
     # print(w3.eth.filter('pending').get_new_entries())
@@ -69,7 +73,7 @@ class MainWidget(App):
             self.transactions.data = [
                 {"label_color": (.5, .5, 1, 1),
                  'label_text': str('No transaction for this input box address'),
-                 'transaction_id':''
+                 'transaction_id': ''
                  }
             ]
         else:
@@ -78,9 +82,9 @@ class MainWidget(App):
                 if(self.last_search.lower() == transaction['to'].lower()):
                     self.transactions.data.append(
                         {
-                            "label_color":(0,1,0,1),
-                            "label_text":str(transaction['value']),
-                            "transaction_id":transaction['hash']
+                            "label_color": (0, 1, 0, 1),
+                            "label_text": str(transaction['value']),
+                            "transaction_id": transaction['hash']
                         }
                     )
                 else:
@@ -93,14 +97,13 @@ class MainWidget(App):
                     )
         pass
 
-
     def on_error(self, req, error):
         print('error')
         print(error)
         self.transactions.data = [
             {"label_color": (.5, .5, 1, 1),
              'label_text': str(error),
-             "transaction_id":''
+             "transaction_id": ''
              }
         ]
         pass

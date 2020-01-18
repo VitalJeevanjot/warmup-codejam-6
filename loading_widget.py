@@ -12,6 +12,7 @@ class LoadingWidget(Widget):
 
 class LoadingWidgets(Widget):
     child_number = NumericProperty()
+
     def __init__(self, **kwargs):
         super(LoadingWidgets, self).__init__(**kwargs)
         self.child_number = kwargs.get('child_number', 5)
@@ -22,16 +23,16 @@ class LoadingWidgets(Widget):
             self.add_widget(widget)
         self.anims = []
         self.animating = False
-    
+
     def start(self):
         i = 1
         self.animating = True
         for widget in self.children:
             widget.opacity = 100
-            anim = Animation(x=self.pos[0] + 200, y=self.pos[1], 
-                            duration=self._anim_duration(i), t='in_circ') + \
-                   Animation(x=self.pos[0], y=self.pos[1], 
-                            duration=self._anim_duration(i), t='in_circ')
+            anim = Animation(x=self.pos[0] + 200, y=self.pos[1],
+                             duration=self._anim_duration(i), t='in_circ') + \
+                Animation(x=self.pos[0], y=self.pos[1],
+                          duration=self._anim_duration(i), t='in_circ')
             anim.bind(on_complete=self._on_complete)
             anim.repeat = True
             self.anims.append(anim)
@@ -49,4 +50,4 @@ class LoadingWidgets(Widget):
             widget.pos = self.pos
 
     def _anim_duration(self, i):
-        return i/(self.child_number^2) + 0.5
+        return i/(self.child_number ^ 2) + 0.5

@@ -21,76 +21,85 @@
         size_hint_y:0.85
 
 
-<MyPopup@Popup>:
+<MyPopup>:
     title: 'Transactions'
     auto_dismiss: False
     size_hint: (0.5, 0.8)
+    FloatLayout:
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            orientation: 'vertical'
+            BoxLayout:
+                size_hint_y: 0.1
+                TextInput:
+                    id: address_inp
+                    hint_text: 'Enter chain address'
+                    multiline: False
+                Button:
+                    size_hint_x: 0.2
+                    text: 'Search'
+                    on_release: app.get_data(address_inp, recycleViewer)
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+                RecycleView:
+                    id: recycleViewer
+                    data: [{'color': (.5, .5, 1, 1), 'text': 'Please search using above'}]
+                    viewclass: 'Label'
+                    RecycleBoxLayout:
+                        default_size: None, dp(56)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: 'vertical'
+                        foreground_color: 0, 0, 0, 1
+            Button:
+                size_hint_y: 0.1
+                text: 'Click to close'
+                on_release: root.dismiss()
+                background_color: .5, .3, 0, 1
+                background_normal: 'hi'
+                background_down: 'hi'
+        LoadingWidgets:
+            id: loading_widget
+            child_number: 5
+
+<Web3Widget>:
     BoxLayout:
+        orientation: 'vertical'
         canvas.before:
             Color:
                 rgb: 1, 1, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
-        orientation: 'vertical'
         BoxLayout:
-            size_hint_y: 0.1
-            TextInput:
-                id: address_inp
-                text: app.last_search
-                hint_text: 'Enter chain address'
-                multiline: False
+            orientation: 'vertical'
+            Label:
+                text: 'Chain Index of Random Chain: '
+                color: 0, 0, 0, 1
+            Label:
+                id: blocknom
+                text: '0'
+                color: 0, 0, 0, 1
+                font_size: 50
+        BoxLayout:
+            orientation: 'horizontal'
+    #        Button:
+    #            text: 'Side Panel (with all transactions loaded form popup added address)'
             Button:
-                size_hint_x: 0.2
-                text: 'Search'
-                on_release: app.get_data(address_inp, recycleViewer)
-        ScrollView:
-            do_scroll_x: False
-            do_scroll_y: True
-            RecycleView:
-                id: recycleViewer
-                data: [{'label_color': (.5, .5, 1, 1), 'label_text': 'Please search using above'}]
-                viewclass: 'CustomLabel'
-                RecycleBoxLayout:
-                    default_size: None, dp(56)
-                    default_size_hint: 1, None
-                    size_hint_y: None
-                    height: self.minimum_height
-                    orientation: 'vertical'
-                    foreground_color: 0, 0, 0, 1
-        Button:
-            size_hint_y: 0.1
-            text: 'Click to close'
-            on_release: root.dismiss()
-            background_color: .5, .3, 0, 1
-            background_normal: 'hi'
-            background_down: 'hi'
-
-<Web3Widget>:
-    orientation: 'vertical'
-    canvas.before:
-        Color:
-            rgb: 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    BoxLayout:
-        orientation: 'vertical'
-        Label:
-            text: 'Chain Index of Random Chain: '
-            color: 0, 0, 0, 1
-        Label:
-            id: blocknom
-            text: '0'
-            color: 0, 0, 0, 1
-            font_size: 50
-    BoxLayout:
-        orientation: 'horizontal'
-#        Button:
-#            text: 'Side Panel (with all transactions loaded form popup added address)'
-        Button:
-            text: "Popup Transactions (search from address)"
-            on_release: Factory.MyPopup().open()
-        Button:
-            text: "Update with loading"
-            on_release: blocknom.text = str(w3.eth.blockNumber)
+                text: "Popup Transactions (search from address)"
+                on_release: app.show_popup()
+            Button:
+                text: "Update with loading"
+                on_release: app.update_chain_index()
+    LoadingWidgets:
+        id: loading_widget
+        child_number: 5
+        size: root.size
+        pos: root.pos

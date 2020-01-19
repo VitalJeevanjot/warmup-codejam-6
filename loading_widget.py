@@ -20,13 +20,23 @@ class LoadingWidgets(Widget):
         Logger.info(f'Loading widgets pos: {self.pos}, size: {self.size}')
         self.child_number = kwargs.get('child_number', 5)
         for i in range(1, self.child_number + 1):
-            widget = LoadingWidget(center=self.center, pos_hint={'x':1, 'y':.5})
-            # widget.opacity = 0
+            widget = LoadingWidget()
+            widget.opacity = 0
             widget.set_alpha_channel(i/4)
             Logger.info(f'Widget #{i} pos: {widget.pos}, size: {widget.size}')
             self.add_widget(widget)
         self.anims = []
         self.animating = False
+
+    def on_pos(self, width, height):
+        Logger.info(f'Loading widgets pos changed: {self.pos}, size: {self.size}')
+        for widget in self.children:
+            widget.pos = self.pos
+
+    def on_size(self, width, height):
+        Logger.info(f'Loading widgets size changed: {self.pos}, size: {self.size}')
+        for widget in self.children:
+            widget.size = [self.height, self.height]
 
     def start(self):
         i = 1
